@@ -9,14 +9,16 @@ from player import(player)
 def getInputs():
 	pass
 
-def updateGameWorld():
-	pass
+def updateGameWorld(clock, updatableCont, dt):
+	dt = clock.tick(60) / 1000
+	updatableCont.update(dt)
 
-def drawGameScreen(screen, player):
+def drawGameScreen(screen, drawableCont):
 	#clear the screen...
 	screen.fill(ASTEROID_BACKGROUND_COLOUR)
 	#draw shit...
-	player.draw(screen)
+	for shit in drawableCont:
+		shit.draw(screen)
 	#update the screen
 	pygame.display.flip()
 
@@ -27,11 +29,18 @@ def main():
 	print(f"Screen height: {SCREEN_HEIGHT}")
 
 	pygame.init()
+
 	clock = pygame.time.Clock()
 	dt = 0
+
 	screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+	updatable = pygame.sprite.Group()
+	drawable = pygame.sprite.Group()
+	player.containers = (updatable, drawable)
+
 	claude = player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+
 
 	while True:
 		for event in pygame.event.get():
@@ -39,12 +48,9 @@ def main():
 				return
 		getInputs()
 
-		updateGameWorld()
+		updateGameWorld(clock, updatable, dt)
 
-		drawGameScreen(screen, claude)
-
-		dt = clock.tick(60) / 1000
-		
+		drawGameScreen(screen, drawable)
 
 
 if __name__ == "__main__":
