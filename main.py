@@ -13,13 +13,16 @@ from shot import(Shot)
 def getInputs():
 	pass
 
-def updateGameWorld(clock, updatableCont, asteroidCont, player, dt):
+def updateGameWorld(clock, updatableCont, asteroidCont, player, bullets, dt):
 	dt = clock.tick(60) / 1000
 	updatableCont.update(dt)
 	for asteroid in asteroidCont:
 		if asteroid.collision(player):
-#			print("Game over!")
 			sys.exit("Game over!")
+		for bullet in bullets:
+			if asteroid.collision(bullet):
+				asteroid.split()
+				bullet.kill()
 
 def drawGameScreen(screen, drawableCont):
 	#clear the screen...
@@ -63,7 +66,7 @@ def main():
 				return
 		getInputs()
 
-		updateGameWorld(clock, updatable, asteroids, claude, dt)
+		updateGameWorld(clock, updatable, asteroids, claude, bullets, dt)
 
 		drawGameScreen(screen, drawable)
 
