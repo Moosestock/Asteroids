@@ -2,16 +2,24 @@
 # the open-source pygame library
 # throughout this file
 import pygame
+import sys
 from constants import *
 from circleshape import *
-from player import(player)
+from player import(Player)
+from asteroid import(Asteroid)
+from asteroidfield import(AsteroidField)
+from shot import(Shot)
 
 def getInputs():
 	pass
 
-def updateGameWorld(clock, updatableCont, dt):
+def updateGameWorld(clock, updatableCont, asteroidCont, player, dt):
 	dt = clock.tick(60) / 1000
 	updatableCont.update(dt)
+	for asteroid in asteroidCont:
+		if asteroid.collision(player):
+#			print("Game over!")
+			sys.exit("Game over!")
 
 def drawGameScreen(screen, drawableCont):
 	#clear the screen...
@@ -37,10 +45,17 @@ def main():
 
 	updatable = pygame.sprite.Group()
 	drawable = pygame.sprite.Group()
-	player.containers = (updatable, drawable)
+	Player.containers = (updatable, drawable)
 
-	claude = player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+	claude = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
 
+	asteroids = pygame.sprite.Group()
+	Asteroid.containers = (asteroids, updatable, drawable)
+	AsteroidField.containers = (updatable)
+	asteroidfield = AsteroidField()
+
+	bullets = pygame.sprite.Group()
+	Shot.containers = (bullets, updatable, drawable)
 
 	while True:
 		for event in pygame.event.get():
@@ -48,7 +63,7 @@ def main():
 				return
 		getInputs()
 
-		updateGameWorld(clock, updatable, dt)
+		updateGameWorld(clock, updatable, asteroids, claude, dt)
 
 		drawGameScreen(screen, drawable)
 
